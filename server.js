@@ -11,7 +11,9 @@ app.use(bodyParser.json())
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!');
 });
-
+app.get('/',function(req,res){
+res.sendfile('index.html')
+})
 app.post('/push', function(req, res){
     console.log(req.body)
 
