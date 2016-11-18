@@ -1,0 +1,24 @@
+{
+  "name": "tensor-stp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/calacitizen/tensor-stp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/calacitizen/tensor-stp/issues"
+  },
+  "homepage": "https://github.com/calacitizen/tensor-stp#readme",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "socket.io": "^1.5.1"
+  }
+}
