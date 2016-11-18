@@ -1,11 +1,18 @@
-var express = require('express');
-var app = express();
-var socketio = require('socket.io');
-
+var app = require('express')();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 var bodyParser = require('body-parser');
 
-
+var userSocket = null;
 app.use(bodyParser.json())
+app.get('/', function(req, res){
+  res.sendfile('index.html');
+});
+
+
+io.on('connection', function(socket){
+  userSocket = socket;
+});
 
 
 app.listen(3000, function () {
@@ -15,10 +22,12 @@ app.get('/',function(req,res){
 res.sendfile('index.html')
 })
 app.post('/push', function(req, res){
-    console.log(req.body)
 
 
+  userSocket && userSocket.emit('music', req.body)
+  res.send(req.body);
 
-    res.sendStatus(200);
-})
+
+    //res.sendStatus(200);
+});
 
