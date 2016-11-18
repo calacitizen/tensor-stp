@@ -9,4 +9,12 @@
       <script src="../tuna.js"></script>
       <script src="../babel.min.js"></script>
       <script type="text/babel" src="../client.js"></script>
+
+      <script src="../socket.js"></script>
+      <script>
+          var socket = io();
+          socket.on('music',function(data){
+          console.log(data);
+          })
+      </script>
    </body>
