@@ -375,29 +375,47 @@ class ArpPlayer {
       master: new Tone.Gain(0.7),
       treb: new Tone.Gain(0.7),
       bass: new Tone.Gain(0.8),
+      tempo: new Tone.Gain(0.6),
+      monoSynths: new Tone.Gain(0.5),
       crash: new Tone.Gain(0.6),
-      punch: new Tone.Gain(0.6)
     };
     this.fx = {
       distortion: new Tone.Distortion(0.8),
       reverb: new Tone.Freeverb(0.1, 3000),
       delay: new Tone.PingPongDelay('16n', 0.1),
-      bitcrusher: new Tone.BitCrusher(4),
-      phaser: new Tone.Phaser(15,5,1000)
     };
     this.synths = {
       treb: new Tone.PolySynth(1, Tone.SimpleAM),
-      bass: new Tone.FMSynth(),
-      crash: new Tone.FMSynth(),
-      punch: new Tone.FMSynth()
+      bass: new Tone.DuoSynth(),
+      monoSynths: new Tone.MonoSynth({
+        "portamento" : 0.01,
+        "oscillator" : {
+          "type" : "square"
+        },
+        "envelope" : {
+          "attack" : 0.03,
+          "decay" : 0.2,
+          "sustain" : 0.4,
+          "release" : 1.4,
+        },
+        "filterEnvelope" : {
+          "attack" : 0.05,
+          "decay" : 0.1,
+          "sustain" : 0.05,
+          "release" : 0.8,
+          "baseFrequency" : 300,
+          "octaves" : 4
+        }
+      }),
+      crash: new Tone.FMSynth()
     };
-    //bass
-    this.synths.bass.modulationIndex.value = 40;
-    this.synths.bass.detune.value = 1;
-    this.synths.bass.modulation.type = "triangle";
-    this.synths.bass.modulationEnvelope.attack = 0.2;
-    this.synths.bass.modulationEnvelope.decay = 0.7;
-    this.synths.bass.oscillator.type = "triangle";
+
+    this.synths.bass.vibratoAmount.value = 0.1;
+    this.synths.bass.harmonicity.value = 1.5;
+    this.synths.bass.voice0.oscillator.type = 'triangle';
+    this.synths.bass.voice0.envelope.attack = 0.05;
+    this.synths.bass.voice1.oscillator.type = 'triangle';
+    this.synths.bass.voice1.envelope.attack = 0.05;
 
     //crash
     this.synths.crash.modulationIndex.value = 0;
@@ -406,33 +424,22 @@ class ArpPlayer {
     this.synths.crash.modulationEnvelope.attack = 0.2;
     this.synths.crash.modulationEnvelope.decay = 0.1;
     this.synths.crash.oscillator.type = "square";
-    //
-    //punch
-    this.synths.punch.modulationIndex.value = 40;
-    this.synths.punch.detune.value = 0;
-    this.synths.punch.modulation.type = "triangle";
-    this.synths.punch.modulationEnvelope.attack = 0.5;
-    this.synths.punch.modulationEnvelope.decay = 0.3;
-    this.synths.punch.oscillator.type = "triangle";
-    this.synths.punch.harmonicity.value = 0;
 
     // fx mixes
-    this.fx.distortion.wet.value = 0.3;
+    this.fx.distortion.wet.value = 0.2;
     this.fx.reverb.wet.value = 0.2;
     this.fx.delay.wet.value = 0.3;
-    this.fx.bitcrusher.wet.value = 0.7;
-    this.fx.phaser.wet.value = 0.4;
     // gain levels
     this.channel.master.toMaster();
     this.channel.treb.connect(this.channel.master);
     this.channel.bass.connect(this.channel.master);
+    this.channel.monoSynths.connect(this.channel.master);
     this.channel.crash.connect(this.channel.master);
-    this.channel.punch.connect(this.channel.master);
     // fx chains
-    //this.synths.treb.chain(this.fx.delay, this.fx.reverb,this.fx.distortion, this.channel.treb);
-    //this.synths.bass.chain(this.fx.bitcrusher, this.channel.bass);
-    this.synths.crash.chain(this.fx.bitcrusher,this.fx.reverb,this.fx.phaser,this.channel.crash);
-    //this.synths.punch.chain(this.fx.bitcrusher,this.fx.phaser,this.fx.reverb,this.channel.punch);
+    this.synths.treb.chain(this.fx.delay, this.fx.reverb, this.channel.treb);
+    this.synths.bass.chain(this.fx.distortion, this.channel.bass);
+    this.synths.monoSynths.chain(this.channel.monoSynths);
+    // this.synths.crash.chain(this.fx.reverb,this.channel.crash);
   };
 
   _loadTransport() {
@@ -494,9 +501,8 @@ class ArpPlayer {
       // slappin da bass
       if(!this.player.bass_on) {
         this.player.bass_on = true;
-        //this.synths.bass.triggerAttack(bass_1,time);
-        this.synths.crash.triggerAttack(bass_1,time);
-        //this.synths.punch.triggerAttack(bass_1,time);
+        this.synths.bass.triggerAttack(bass_1, time);
+        this.synths.crash.triggerAttack(bass_1, time);
         this._utilActiveNoteClassToggle([bass_1.replace('#', 'is')], 'active-b');
       }
 
@@ -504,22 +510,28 @@ class ArpPlayer {
       this.player.step++;
 
       // changing chords
+
+
       if(this.player.step % (this.arpeggio.length * this.player.arp_repeat) === 0) {
         this.player.chord_step++;
         this.player.bass_on = false;
-        //this.synths.bass.triggerRelease(time);
-        //this.synths.crash.triggerRelease(time);
-        this.synths.punch.triggerRelease(time);
+        this.synths.bass.triggerRelease(time);
+        this.synths.crash.triggerRelease(time);
         this.player.triad_step++;
       }
+
+
       // arpin'
       let note_ref = `${note.note}${note.rel_octave + this.player.octave_base}`;
       this._utilActiveNoteClassToggle([note_ref.replace('#', 'is')], 'active-t');
-      // console.log(this.player.step);
+
+
       if (this.player.step % 3 === 0) {
-         this.synths.punch.triggerAttackRelease(note_ref, '16n', time);
+         this.synths.monoSynths.triggerAttackRelease(note_ref, '16n', time);
       }
+
       this.synths.treb.triggerAttackRelease(note_ref, '16n', time);
+
     }, '16n');
   };
 
