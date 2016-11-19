@@ -400,20 +400,20 @@ class ArpPlayer {
     this.synths.bass.oscillator.type = "triangle";
 
     //crash
-    this.synths.crash.modulationIndex.value = 0;
-    this.synths.crash.detune.value = 0;
-    this.synths.crash.modulation.type = "square";
-    this.synths.crash.modulationEnvelope.attack = 0.2;
-    this.synths.crash.modulationEnvelope.decay = 0.1;
-    this.synths.crash.oscillator.type = "square";
+    this.synths.crash.modulationIndex.value = 2;
+    this.synths.crash.detune.value = 1;
+    this.synths.crash.modulation.type = "triangle";
+    this.synths.crash.modulationEnvelope.attack = 0.7;
+    this.synths.crash.modulationEnvelope.decay = 0.2;
+    this.synths.crash.oscillator.type = "triangle";
     //
     //punch
-    this.synths.punch.modulationIndex.value = 40;
+    this.synths.punch.modulationIndex.value = 60;
     this.synths.punch.detune.value = 0;
-    this.synths.punch.modulation.type = "triangle";
-    this.synths.punch.modulationEnvelope.attack = 0.5;
-    this.synths.punch.modulationEnvelope.decay = 0.3;
-    this.synths.punch.oscillator.type = "triangle";
+    this.synths.punch.modulation.type = "square";
+    this.synths.punch.modulationEnvelope.attack = 0.8;
+    this.synths.punch.modulationEnvelope.decay = 0.1;
+    this.synths.punch.oscillator.type = "square";
     this.synths.punch.harmonicity.value = 0;
 
     // fx mixes
@@ -431,8 +431,8 @@ class ArpPlayer {
     // fx chains
     //this.synths.treb.chain(this.fx.delay, this.fx.reverb,this.fx.distortion, this.channel.treb);
     //this.synths.bass.chain(this.fx.bitcrusher, this.channel.bass);
-    this.synths.crash.chain(this.fx.bitcrusher,this.fx.reverb,this.fx.phaser,this.channel.crash);
-    //this.synths.punch.chain(this.fx.bitcrusher,this.fx.phaser,this.fx.reverb,this.channel.punch);
+    //this.synths.crash.chain(this.fx.bitcrusher,this.fx.reverb,this.channel.crash);
+    this.synths.punch.chain(this.fx.bitcrusher,this.fx.phaser,this.fx.reverb,this.channel.punch);
   };
 
   _loadTransport() {
@@ -495,8 +495,8 @@ class ArpPlayer {
       if(!this.player.bass_on) {
         this.player.bass_on = true;
         //this.synths.bass.triggerAttack(bass_1,time);
-        this.synths.crash.triggerAttack(bass_1,time);
-        //this.synths.punch.triggerAttack(bass_1,time);
+        //this.synths.crash.triggerAttack(bass_1,time);
+        this.synths.punch.triggerAttack(bass_1,time);
         this._utilActiveNoteClassToggle([bass_1.replace('#', 'is')], 'active-b');
       }
 

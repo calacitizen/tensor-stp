@@ -14,7 +14,7 @@ app.get('/', function(req, res) {
 app.use(express.static(__dirname + '/public'));
 
 io.on('connection', function(socket) {
-    userSocket = socket;
+    // userSocket = socket;
 });
 
 http.listen(3000, function() {
@@ -31,23 +31,24 @@ app.get('/ag', function(req, res) {
 })
 
 app.post('/push', function(req, res) {
-    
+if (req.body.length < 8) { res.sendStatus(200); return;}
 
     var result = {
       payLoad: [],
-      noteNumbers: [],    
-      arpArray: [],        
+      noteNumbers: [],
+      arpArray: [],
       fiveHundreds: false
     }
 
-    
+
 
     var count500=0;
-    for ( var i=0; i<8; ++i) {
+    for ( var i=0; i<8; i++) {
+//      if (!req.body[)
       result.payLoad.push(req.body[i]);
       var firstNumberOfSize = req.body[i].size.toString()[0];
       var firstNumberOfAmount =  req.body[i].amount.toString()[0];
-      
+
       var note= Math.abs((+firstNumberOfSize) - (+firstNumberOfAmount));
       if (note>7)
         note=7;
@@ -61,13 +62,13 @@ app.post('/push', function(req, res) {
     {
       var firstNumberOfSize = req.body[i].size.toString()[0];
       var firstNumberOfAmount =  req.body[i].amount.toString()[0];
-     
+
       var note= Math.abs( (+firstNumberOfSize) - (+firstNumberOfAmount));
       if (note>5)
         note=5;
       result.arpArray.push(note);
     }
-      
+
     if (count500>=2)
         result.fiveHundreds= true;
 
@@ -75,8 +76,9 @@ app.post('/push', function(req, res) {
     console.log(result.arpArray);
     console.log(result.fiveHundreds);
 
-    userSocket && userSocket.emit('music', result);
-
+    // userSocket && userSocket.emit('music', result);
+    io.sockets.emit('music', result);
+    console.log(result);
 
 
 
