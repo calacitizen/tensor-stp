@@ -17,7 +17,7 @@ io.on('connection', function(socket) {
     userSocket = socket;
 });
 
-app.listen(3000, function() {
+http.listen(3000, function() {
     console.log('App listening on port 3000!');
 });
 app.get('/', function(req, res) {
