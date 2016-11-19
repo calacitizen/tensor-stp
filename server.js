@@ -31,7 +31,7 @@ app.get('/ag', function(req, res) {
 })
 
 app.post('/push', function(req, res) {
-if (req.body.length < 8) { res.sendStatus(200); return;}
+//if (req.body.length < 8) { res.sendStatus(200); return;}
 
     var result = {
       payLoad: [],
@@ -44,7 +44,7 @@ if (req.body.length < 8) { res.sendStatus(200); return;}
     var logsCount= req.body.length;
     if (logsCount>8)
       logsCount=8;
-    console.log(logsCount);
+    //console.log(logsCount);
 
     var count500=0;
     var note=0;
@@ -62,8 +62,16 @@ if (req.body.length < 8) { res.sendStatus(200); return;}
         count500++;
     }
 
-    var arpeggioCount= Math.floor(Math.random() * 3 + 3);
-    for (var i=0; i<arpeggioCount; ++i)
+    var arpeggioCount = 0;
+    if (logsCount>6)
+        arpeggioCount= Math.floor(Math.random() * 4) + 3;
+    else
+      if (logsCount<=6)
+        arpeggioCount= logsCount;
+
+    
+    
+    for (var i=0; i<arpeggioCount; i++)
     {
       var firstNumberOfSize = req.body[i].size.toString()[0];
       var firstNumberOfAmount =  req.body[i].amount.toString()[0];
@@ -76,10 +84,6 @@ if (req.body.length < 8) { res.sendStatus(200); return;}
 
     if (count500>=2)
         result.fiveHundreds= true;
-
-    console.log(result.noteNumbers);
-    console.log(result.arpArray);
-    console.log(result.fiveHundreds);
 
     // userSocket && userSocket.emit('music', result);
     io.sockets.emit('music', result);
