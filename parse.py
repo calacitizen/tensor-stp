@@ -1,13 +1,15 @@
 from datetime import datetime
 import time
 import csv
+import process
+#import SendingMusic
 
 class CSV_parse:
     def __init__(self):
         self.data = []
         self.format = '%H:%M:%S'
-        self.cur_time = datetime.strptime('0:0:0', self.format)
-        self.count = 10
+        self.cur_time = 0
+        self.count = 10000
 
     def get_data(self):
         return self.data
@@ -26,61 +28,33 @@ class CSV_parse:
     def parse(self, t):
         with open(t, 'r', encoding='utf-8') as f:
             reader = csv.reader(f, delimiter='|')
-
+            #sm = SendingMusic("log.txt")
             cnt = 0
+            p = process('log.txt')
             for row in reader:
-                t = self.to_time(row[1])
-                if t == self.cur_time:
-                    self.data.append([
-                        int(datetime.strptime(row[1], '%d/%b/%Y:%H:%M:%S %z').timestamp()),#"timestamp" :
-                        row[0], #"hostname" :
-                        "/" + row[2]+"/"+row[3],#"path" :
-                        row[4],#"resp_code" :
-                        row[5],#"resp_size" :
-                        self.is_success(row[4]),#"success" :
-                        "-",#"resp_color" :
-                        "-",#"ref_url" :
-                        row[6].split(' ')[0],#"user_agent" :
-                        row[2],#"virt_host" :
-                        "-",#"pid" :
-                    ])
-                    """
-                    self.data.append({
-                        "timestamp" : datetime.strptime(row[1], '%d/%b/%Y:%H:%M:%S %z').timestamp(),
-                        "hostname" : row[0],
-                        "path" : "/" + row[2]+"/"+row[3],
-                        "resp_code" : row[4],
-                        "resp_size" : row[5],
-                        "success" : lambda x: 1 if row[4] == "200" else 0,
-                        "resp_color" : "-",
-                        "ref_url" : "-",
-                        "user_agent" : row[6].split(' ')[0],
-                        "virt_host" : row[2],
-                        "pid" : "-",
-                    })
-                    """
-                else:
-                    if self.data != []:
+                curt = datetime.strptime(row[1], '%d/%b/%Y:%H:%M:%S %z').minute
+                if curt != self.cur_time:
+                    if cnt % 10 == 0 and self.data != []:
                         with open('log.txt', 'w', encoding='utf-8') as f1:
                             writer = csv.writer(f1, delimiter='|')
                             writer.writerows(self.data)
-
-                    self.cur_time = t
-                    self.data = [[
-                        int(datetime.strptime(row[1], '%d/%b/%Y:%H:%M:%S %z').timestamp()),#"timestamp" :
-                        row[0], #"hostname" :
-                        "/" + row[2]+"/"+row[3],#"path" :
-                        row[4],#"resp_code" :
-                        row[5],#"resp_size" :
-                        self.is_success(row[4]),#"success" :
-                        "-",#"resp_color" :
-                        "-",#"ref_url" :
-                        row[6].split(' ')[0],#"user_agent" :
-                        row[2],#"virt_host" :
-                        "-",#"pid" :
-                    ]]
-
-
+                        self.data = []
+                        p.start()
+                    self.cur_time = curt
+                    cnt += 1
+                self.data.append([
+                    int(datetime.strptime(row[1], '%d/%b/%Y:%H:%M:%S %z').timestamp()),#"timestamp" :
+                    row[0], #"hostname" :
+                    "/" + row[2]+"/"+row[3],#"path" :
+                    row[4],#"resp_code" :
+                    row[5],#"resp_size" :
+                    self.is_success(row[4]),#"success" :
+                    "-",#"resp_color" :
+                    "-",#"ref_url" :
+                    row[6].split(' ')[0],#"user_agent" :
+                    row[2],#"virt_host" :
+                    "-",#"pid" :
+                ])
 
 t = CSV_parse()
 t.parse('resutl.csv')
