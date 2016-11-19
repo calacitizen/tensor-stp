@@ -41,15 +41,19 @@ if (req.body.length < 8) { res.sendStatus(200); return;}
     }
 
 
+    var logsCount= req.body.length;
+    if (logsCount>8)
+      logsCount=8;
+    console.log(logsCount);
 
     var count500=0;
-    for ( var i=0; i<8; i++) {
-//      if (!req.body[)
+    var note=0;
+    for ( var i=0; i<logsCount; i++) {
       result.payLoad.push(req.body[i]);
       var firstNumberOfSize = req.body[i].size.toString()[0];
       var firstNumberOfAmount =  req.body[i].amount.toString()[0];
 
-      var note= Math.abs((+firstNumberOfSize) - (+firstNumberOfAmount));
+      note= Math.abs((+firstNumberOfSize) - (+firstNumberOfAmount));
       if (note>6)
         note=6;
       result.noteNumbers.push(note);
@@ -58,15 +62,16 @@ if (req.body.length < 8) { res.sendStatus(200); return;}
         count500++;
     }
 
-    for (var i=0; i<6; ++i)
+    var arpeggioCount= Math.floor(Math.random() * 3 + 3);
+    for (var i=0; i<arpeggioCount; ++i)
     {
       var firstNumberOfSize = req.body[i].size.toString()[0];
       var firstNumberOfAmount =  req.body[i].amount.toString()[0];
 
-      var note= Math.abs( (+firstNumberOfSize) - (+firstNumberOfAmount));
-      if (note>5)
-        note=5;
-      result.arpArray.push(note);
+      var arp= Math.abs( note - (+firstNumberOfAmount) );
+      if (arp>5)
+        arp=5;
+      result.arpArray.push(arp);
     }
 
     if (count500>=2)
