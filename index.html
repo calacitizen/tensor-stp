@@ -373,26 +373,37 @@
           var socket = io();
           socket.on('music',function(data){
 
+            console.log(data);
+
          if (data.fivehundreds) {
+           console.log('500');
               app.msUpdateModeString('minor');
               app.player.arp_repeat = 1;
            } else {
-              app.msUpdateModeString('locrian');
-              app.player.arp_repeat = 2;
+             if (app.ms_mode !== 'locrian') {
+               app.msUpdateModeString('locrian');
+               app.player.arp_repeat = 2;
+             }
            }
 
 
-           if (data.payload.length > 3) {
+           if (data.payLoad.length > 3) {
              app.synths.bass.chain(app.fx.distortion, app.channel.bass);
              app.synths.treb.chain(app.fx.reverb, app.channel.treb);
-
+             app.synths.monoSynths.disconnect();
+           } else {
+              app.synths.bass.disconnect();
+              app.synths.treb.disconnect();
+              app.synths.monoSynths.chain(app.channel.monoSynths);
            }
 
 
-          if (data.payload.length > 6) {
-
+          if (data.payLoad.length > 7) {
               app.synths.crash.chain(app.fx.reverb, app.channel.crash);
-
+              app.player.arp_repeat = 1;
+          } else {
+            app.synths.crash.disconnect();
+            app.player.arp_repeat = 1;
           }
 
           if (!app.player.playing) {
@@ -401,8 +412,8 @@
           Array.prototype.splice.apply(app.chords, [0, data.noteNumbers.length].concat(data.noteNumbers));
           // app.ap_steps = data.arpsteps;
           app.arpeggio = data.arpArray;
-          // app.fx.distortion.wet.value = data.payload.length / 10;
-          // app.fx.reverb.wet.value = (data.payload.length - 0.1) / 10;
+          // app.fx.distortion.wet.value = data.payLoad.length / 10;
+          // app.fx.reverb.wet.value = (data.payLoad.length - 0.1) / 10;
           app._setArpeggioPatterns();
           app._updateChords();
           app._updateOutput();
