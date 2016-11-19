@@ -436,8 +436,8 @@ class ArpPlayer {
     this.channel.monoSynths.connect(this.channel.master);
     this.channel.crash.connect(this.channel.master);
     // fx chains
-    this.synths.treb.chain(this.fx.delay, this.fx.reverb, this.channel.treb);
-    this.synths.bass.chain(this.fx.distortion, this.channel.bass);
+    // this.synths.treb.chain(this.fx.delay, this.fx.reverb, this.channel.treb);
+    // this.synths.bass.chain(this.fx.distortion, this.channel.bass);
     this.synths.monoSynths.chain(this.channel.monoSynths);
     // this.synths.crash.chain(this.fx.reverb,this.channel.crash);
   };
@@ -770,6 +770,11 @@ class ArpPlayer {
     this.msUpdateMode = (e) => {
       this._utilClassToggle(e.target, 'mode-current');
       this.ms_mode = e.target.getAttribute('data-value');
+      this.msUpdateScale();
+      this._updateChords();
+    };
+    this.msUpdateModeString = (name) => {
+      this.ms_mode = name;
       this.msUpdateScale();
       this._updateChords();
     };

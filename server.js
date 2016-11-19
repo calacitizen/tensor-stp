@@ -14,7 +14,7 @@ app.get('/', function(req, res) {
 app.use(express.static(__dirname + '/public'));
 
 io.on('connection', function(socket) {
-    userSocket = socket;
+    // userSocket = socket;
 });
 
 http.listen(3000, function() {
@@ -31,52 +31,63 @@ app.get('/ag', function(req, res) {
 })
 
 app.post('/push', function(req, res) {
-    
+//if (req.body.length < 8) { res.sendStatus(200); return;}
 
     var result = {
       payLoad: [],
-      noteNumbers: [],    
-      arpArray: [],        
+      noteNumbers: [],
+      arpArray: [],
       fiveHundreds: false
     }
 
-    
+
+    var logsCount= req.body.length;
+    if (logsCount>8)
+      logsCount=8;
+    //console.log(logsCount);
 
     var count500=0;
-    for ( var i=0; i<8; ++i) {
+    var note=0;
+    for ( var i=0; i<logsCount; i++) {
       result.payLoad.push(req.body[i]);
       var firstNumberOfSize = req.body[i].size.toString()[0];
       var firstNumberOfAmount =  req.body[i].amount.toString()[0];
-      
-      var note= Math.abs((+firstNumberOfSize) - (+firstNumberOfAmount));
-      if (note>7)
-        note=7;
+
+      note= Math.abs((+firstNumberOfSize) - (+firstNumberOfAmount));
+      if (note>6)
+        note=6;
       result.noteNumbers.push(note);
 
       if (req.body[i].code > 400)
         count500++;
     }
 
-    for (var i=0; i<6; ++i)
+    var arpeggioCount = 0;
+    if (logsCount>6)
+        arpeggioCount= Math.floor(Math.random() * 4) + 3;
+    else
+      if (logsCount<=6)
+        arpeggioCount= logsCount;
+
+    
+    
+    for (var i=0; i<arpeggioCount; i++)
     {
       var firstNumberOfSize = req.body[i].size.toString()[0];
       var firstNumberOfAmount =  req.body[i].amount.toString()[0];
-     
-      var note= Math.abs( (+firstNumberOfSize) - (+firstNumberOfAmount));
-      if (note>5)
-        note=5;
-      result.arpArray.push(note);
+
+      var arp= Math.abs( note - (+firstNumberOfAmount) );
+      if (arp>5)
+        arp=5;
+      result.arpArray.push(arp);
     }
-      
+
     if (count500>=2)
         result.fiveHundreds= true;
 
-    console.log(result.noteNumbers);
-    console.log(result.arpArray);
-    console.log(result.fiveHundreds);
-
-    userSocket && userSocket.emit('music', result);
-
+    // userSocket && userSocket.emit('music', result);
+    io.sockets.emit('music', result);
+    console.log(result);
 
 
 
