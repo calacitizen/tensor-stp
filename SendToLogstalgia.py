@@ -2,7 +2,7 @@ import os
 import argparse
 import sys
 import subprocess
-from _operator import sub
+from operator import sub
 
 
 class SendingToLogstalgia:
