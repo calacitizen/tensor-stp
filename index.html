@@ -389,12 +389,12 @@
 
            if (data.payLoad.length > 3) {
              app.synths.bass.chain(app.fx.distortion, app.channel.bass);
-             app.synths.treb.chain(app.fx.reverb, app.channel.treb);
-             app.synths.monoSynths.disconnect();
+            //  app.synths.treb.chain(app.fx.reverb, app.channel.treb);
+            //  app.synths.monoSynths.disconnect();
            } else {
               app.synths.bass.disconnect();
-              app.synths.treb.disconnect();
-              app.synths.monoSynths.chain(app.channel.monoSynths);
+              // app.synths.treb.disconnect();
+              // app.synths.monoSynths.chain(app.channel.monoSynths);
            }
 
 
@@ -403,7 +403,7 @@
               app.player.arp_repeat = 1;
           } else {
             app.synths.crash.disconnect();
-            app.player.arp_repeat = 1;
+            app.player.arp_repeat = 2;
           }
 
           if (!app.player.playing) {

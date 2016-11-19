@@ -377,7 +377,7 @@ class ArpPlayer {
       bass: new Tone.Gain(0.8),
       tempo: new Tone.Gain(0.6),
       monoSynths: new Tone.Gain(0.5),
-      crash: new Tone.Gain(0.6),
+      crash: new Tone.Gain(0.4),
     };
     this.fx = {
       distortion: new Tone.Distortion(0.8),
@@ -436,9 +436,9 @@ class ArpPlayer {
     this.channel.monoSynths.connect(this.channel.master);
     this.channel.crash.connect(this.channel.master);
     // fx chains
-    // this.synths.treb.chain(this.fx.delay, this.fx.reverb, this.channel.treb);
+    this.synths.treb.chain(this.fx.delay, this.fx.reverb, this.channel.treb);
     // this.synths.bass.chain(this.fx.distortion, this.channel.bass);
-    this.synths.monoSynths.chain(this.channel.monoSynths);
+    // this.synths.monoSynths.chain(this.channel.monoSynths);
     // this.synths.crash.chain(this.fx.reverb,this.channel.crash);
   };
 
