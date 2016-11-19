@@ -50,8 +50,8 @@ if (req.body.length < 8) { res.sendStatus(200); return;}
       var firstNumberOfAmount =  req.body[i].amount.toString()[0];
 
       var note= Math.abs((+firstNumberOfSize) - (+firstNumberOfAmount));
-      if (note>7)
-        note=7;
+      if (note>6)
+        note=6;
       result.noteNumbers.push(note);
 
       if (req.body[i].code > 400)
