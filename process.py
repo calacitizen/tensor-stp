@@ -1,5 +1,4 @@
-import SendingMusic
-
+from SendingMusic import SendingMusic
 
 class Process:
     def __init__(self, filename):
